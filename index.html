@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ISOXML 施肥設計アプリ V17</title>
+  <title>ISOXML 施肥設計アプリ V18</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.34/esri/themes/light/main.css">
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -435,7 +435,7 @@
   <div id="app">
     <aside id="panel">
 
-      <h1>ISOXML 施肥設計アプリ V17</h1>
+      <h1>ISOXML 施肥設計アプリ V18</h1>
       <p class="small">施肥設計レイヤーを編集し、ISOXML を出力します。</p>
 
       <!-- ========== 1. サインイン ========== -->
@@ -1173,6 +1173,23 @@
           map = webmap;
 
           await view.when();
+
+          // Web マップに保存された既定の表示位置を適用する。
+          // 以前に開いていた Web マップの中心・縮尺を引き継がない。
+          const initialViewpoint =
+            webmap.initialViewProperties &&
+            webmap.initialViewProperties.viewpoint;
+
+          if (initialViewpoint) {
+            await view.goTo(initialViewpoint.clone(), {
+              animate: false
+            });
+          } else if (webmap.initialViewProperties &&
+                     webmap.initialViewProperties.extent) {
+            await view.goTo(webmap.initialViewProperties.extent, {
+              animate: false
+            });
+          }
 
           collectRxLayers(webmap);
           collectPolygonLayers(webmap);
