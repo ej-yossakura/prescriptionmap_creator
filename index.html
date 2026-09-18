@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ISOXML 施肥設計アプリ V15</title>
+  <title>ISOXML 施肥設計アプリ V16</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.34/esri/themes/light/main.css">
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -435,7 +435,7 @@
   <div id="app">
     <aside id="panel">
 
-      <h1>ISOXML 施肥設計アプリ V15</h1>
+      <h1>ISOXML 施肥設計アプリ V16</h1>
       <p class="small">施肥設計レイヤーを編集し、ISOXML を出力します。</p>
 
       <!-- ========== 1. サインイン ========== -->
@@ -459,7 +459,7 @@
         <div id="webmapStatus" class="info-box">未読込</div>
       </section>
 
-      <!-- ========== 3. レイヤー設定 ========== -->
+      <!-- ========== 3. 施肥設計レイヤー ========== -->
       <section id="layerSection" class="section">
         <h2>3. レイヤー設定</h2>
         <h3>施肥設計レイヤー</h3>
@@ -468,14 +468,16 @@
         </select>
 
         <h3>圃場レイヤー</h3>
+        
         <select id="boundaryLayerSelect">
           <option value="">レイヤーを選択してください</option>
         </select>
+
         <h3>圃場レイヤーのキーフィールド</h3>
-        <p class="small">施肥設計レイヤーの圃場名フィールドと突合するフィールドを選択します。</p>
         <select id="boundaryFieldSelect" disabled>
-          <option value="">先に圃場レイヤーを選択してください</option>
+          <option value="">先にレイヤーを選択してください</option>
         </select>
+
         <div id="boundaryMatchInfo" class="info-box">未確認</div>
         <h3>施肥設計レイヤーの透過度</h3>
         <div class="opacity-row">
@@ -535,18 +537,26 @@
 
         <button id="selectionClearBtn" class="secondary">すべて解除</button>
         <div id="cellStatus" class="info-box">レイヤーを選択すると利用できます。</div>
+<p class="small">
+          圃場ポリゴンの外側に TZN 1 以上のセルがないかを確認します。
+          セルの中心が圃場内にあるかで判定します。
+        </p>
+
+
 
         <h3>圃場外への散布チェック（任意）</h3>
-        <p class="small">選択中の圃場について、圃場ポリゴン外に TZN 1 以上のセルがないか確認します。</p>
         <button id="checkRunBtn" class="warn" disabled>圃場外の散布をチェック</button>
-        <button id="outsideZeroBtn" class="secondary" disabled>選択された圃場外セルを TZN 0 にする</button>
+
         <div class="check-row">
           <input type="checkbox" id="checkSelectResult" checked>
-          <label for="checkSelectResult">検出したセルを選択状態にする</label>
+          <label for="checkSelectResult">
+            検出したセルを選択状態にする（セクション 5 で編集できます）
+          </label>
         </div>
+
         <div id="checkResult"></div>
-        <div id="checkStatus" class="info-box">手順3で圃場レイヤーとキーフィールドを設定してください。</div>
-      </section>
+        <div id="checkStatus" class="info-box">圃場ポリゴンレイヤーを選択してください。</div>
+            </section>
 
       <!-- ========== 6. PDV編集 ========== -->
       <section id="pdvSection" class="section">
@@ -565,7 +575,7 @@
             placeholder="総散布量（空欄で無効）">
           <span>kg</span>
         </div>
-        <div id="balanceInfo" class="balance">任意入力です。入力すると過不足を表示します。</div>
+        <div id="balanceInfo" class="balance">総散布量を入力してください。</div>
 
         <table class="grid">
           <thead>
@@ -584,7 +594,7 @@
         <div id="pdvStatus" class="info-box">圃場を選択してください。</div>
       </section>
 
-      <!-- ========== 7. 統計 ========== -->
+      <!-- ========== 8. 統計 ========== -->
       <section id="statsSection" class="section">
         <h2>7. 散布量の統計</h2>
         <div class="tabs">
@@ -596,7 +606,7 @@
         <div id="statsStatus" class="info-box">圃場を選択してください。</div>
       </section>
 
-      <!-- ========== 8. ISOXML出力 ========== -->
+      <!-- ========== 9. ISOXML出力 ========== -->
       <section id="exportSection" class="section">
         <h2>8. ISOXML の出力</h2>
         <p class="small">
@@ -828,6 +838,9 @@
 
         // レイヤー本来の表示条件（復元用）
         baseDefinitionExpression: null,
+        boundaryBaseDefinitionExpression: null,
+        boundaryLayerView: null,
+        boundaryBaseViewFilter: null,
 
         // 差分計算用: セル面積と TZN 別セル数
         cellArea: null,
@@ -1330,12 +1343,12 @@
 
           ui.exportBtn.disabled = !exportCheck.ok;
 
-          state.fields = [];
-          state.matchedFields = [];
-          [ui.fieldSection, ui.cellSection, ui.pdvSection,
-            ui.statsSection, ui.exportSection].forEach(hide);
-          setStatus(ui.boundaryMatchInfo,
-            "圃場レイヤーとキーフィールドを選択してください。");
+          await loadFieldList();
+
+          show(ui.fieldSection);
+          show(ui.cellSection);
+          show(ui.statsSection);
+          show(ui.exportSection);
 
         } catch (error) {
           console.error(error);
@@ -1512,16 +1525,31 @@
       }
 
       function boundaryWhereClause(fieldId) {
-        const info = state.boundaryLayer.fields.find(f => f.name === state.boundaryField);
-        const numeric = ["small-integer","integer","single","double","long"];
-        if (info && numeric.indexOf(info.type)>=0 && Number.isFinite(Number(fieldId))) return state.boundaryField+" = "+Number(fieldId);
-        return state.boundaryField+" = '"+String(fieldId).replace(/'/g,"''")+"'";
+        const f = state.boundaryLayer.fields.find(function(x){ return x.name === state.boundaryField; });
+        const nums = ["small-integer","integer","single","double","long"];
+        if (f && nums.indexOf(f.type) >= 0 && Number.isFinite(Number(fieldId))) {
+          return state.boundaryField + " = " + Number(fieldId);
+        }
+        return state.boundaryField + " = '" + String(fieldId).replace(/'/g,"''") + "'";
       }
-      function applyBoundaryFilter(fieldId) {
+      async function applyBoundaryFilter(fieldId) {
         if (!state.boundaryLayer || !state.boundaryField) return;
-        if (!fieldId) { state.boundaryLayer.definitionExpression=state.boundaryBaseDefinitionExpression; return; }
-        const clause=boundaryWhereClause(fieldId);
-        state.boundaryLayer.definitionExpression=state.boundaryBaseDefinitionExpression ? "("+state.boundaryBaseDefinitionExpression+") AND "+clause : clause;
+        if (!state.boundaryLayerView) {
+          state.boundaryLayerView = await view.whenLayerView(state.boundaryLayer);
+          state.boundaryBaseViewFilter = state.boundaryLayerView.filter || null;
+        }
+        if (!fieldId) {
+          state.boundaryLayer.definitionExpression = state.boundaryBaseDefinitionExpression;
+          state.boundaryLayerView.filter = state.boundaryBaseViewFilter;
+          state.boundaryLayer.refresh();
+          return;
+        }
+        const clause = boundaryWhereClause(fieldId);
+        const definition = state.boundaryBaseDefinitionExpression
+          ? "(" + state.boundaryBaseDefinitionExpression + ") AND " + clause : clause;
+        state.boundaryLayer.definitionExpression = definition;
+        state.boundaryLayerView.filter = { where: definition };
+        state.boundaryLayer.refresh();
       }
 
       async function zoomToField(fieldId) {
@@ -1541,7 +1569,7 @@
           setStatus(
             ui.fieldStatus,
             "選択圃場: " + fieldId + "\nセル数: " + extentResult.count +
-            "\n他の圃場は非表示です。"
+            "\n施肥設計レイヤーと圃場レイヤーは選択圃場のみ表示しています。"
           );
 
         } catch (error) {
@@ -1567,6 +1595,8 @@
 
           // 全圃場を表示に戻す
           applyFieldFilter(null);
+          await applyBoundaryFilter(null);
+          ui.outsideZeroBtn.disabled = true;
 
           setStatus(ui.fieldStatus, "全圃場を表示しています。");
 
@@ -1579,6 +1609,8 @@
 
         // 選択圃場以外を非表示にする
         applyFieldFilter(fieldId);
+        await applyBoundaryFilter(fieldId);
+        ui.outsideZeroBtn.disabled = true;
 
         show(ui.pdvSection);
 
@@ -2462,7 +2494,7 @@
       };
 
       // ==========================================================
-      // 5（任意）. 圃場外への散布チェック
+      // 7. 圃場外への散布チェック
       //
       //  セルの中心が圃場ポリゴンの内側にあるかで判定する。
       //  中心座標は center_x、center_y があればそれを使い、
@@ -2542,10 +2574,13 @@
         }
 
         state.boundaryLayer = state.polygonLayers[Number(index)];
+        state.boundaryLayerView = null;
+        state.boundaryBaseViewFilter = null;
 
         try {
 
           await state.boundaryLayer.load();
+          state.boundaryBaseDefinitionExpression = state.boundaryLayer.definitionExpression || null;
 
           // 圃場 ID の候補となるフィールドを並べる
           const option = document.createElement("option");
@@ -2586,7 +2621,7 @@
             setStatus(
               ui.checkStatus,
               "選択: " + state.boundaryLayer.title +
-              "\n圃場 ID フィールドを選択してください。"
+              "\n圃場レイヤーのキーフィールドを選択してください。"
             );
           }
 
@@ -2596,7 +2631,7 @@
         }
       };
 
-      // 圃場 ID フィールドを選択
+      // 圃場レイヤーのキーフィールドを選択
       async function onBoundaryFieldChange() {
 
         const fieldName = ui.boundaryFieldSelect.value;
@@ -2620,41 +2655,83 @@
 
       // 圃場 ID の一致状況を確認する
       boundary.verifyFieldMatch = async function () {
+
         try {
-          if (!state.rxLayer || !state.resolved.fieldId || !state.boundaryLayer || !state.boundaryField) return;
+
           setStatus(ui.boundaryMatchInfo, "照合中...");
-          async function distinctValues(layer, fieldName) {
-            const q = layer.createQuery();
-            q.where = "1=1"; q.outFields = [fieldName];
-            q.returnGeometry = false; q.returnDistinctValues = true;
-            const r = await layer.queryFeatures(q);
-            return (r.features || []).map(f => f.attributes[fieldName])
-              .filter(v => v !== null && v !== undefined && String(v) !== "");
-          }
-          const rxIds = await distinctValues(state.rxLayer, state.resolved.fieldId);
-          const boundaryIds = await distinctValues(state.boundaryLayer, state.boundaryField);
-          const set = new Set(boundaryIds.map(String));
-          const matched = rxIds.filter(v => set.has(String(v)));
-          const unmatched = rxIds.filter(v => !set.has(String(v)));
-          state.matchedFields = matched.slice();
-          state.fields = matched.slice().sort((a,b) => String(a).localeCompare(String(b), "ja", {numeric:true}));
-          ui.fieldSelect.innerHTML = '<option value="">圃場を選択してください</option>';
+          ui.checkRunBtn.disabled = true;
+
+          const query = state.boundaryLayer.createQuery();
+          query.where = "1=1";
+          query.outFields = [state.boundaryField];
+          query.returnDistinctValues = true;
+          query.returnGeometry = false;
+
+          const result = await state.boundaryLayer.queryFeatures(query);
+
+          const boundaryIds = new Set(
+            result.features
+              .map(function (feature) {
+                return String(feature.attributes[state.boundaryField]);
+              })
+              .filter(function (value) {
+                return value !== "null" && value !== "";
+              })
+          );
+
+          // 施肥設計側の圃場 ID と照合する
+          const matched = [];
+          const unmatched = [];
+
           state.fields.forEach(function (fieldId) {
-            const o=document.createElement("option"); o.value=String(fieldId); o.textContent=String(fieldId); ui.fieldSelect.append(o);
+
+            if (boundaryIds.has(String(fieldId))) {
+              matched.push(fieldId);
+            } else {
+              unmatched.push(fieldId);
+            }
           });
+
+          ui.checkRunBtn.disabled = false;
+
           if (!matched.length) {
-            [ui.fieldSection,ui.cellSection,ui.pdvSection,ui.statsSection,ui.exportSection].forEach(hide);
-            setStatus(ui.boundaryMatchInfo,"警告: 圃場キーが1件も一致しません。\n施肥設計側: "+state.resolved.fieldId+"（"+rxIds.length+"件）\n圃場側: "+state.boundaryField+"（"+boundaryIds.length+"件）",true);
+
+            setStatus(
+              ui.boundaryMatchInfo,
+              "警告: 圃場 ID が 1 件も一致しません。\n" +
+              "施肥設計側: " + state.resolved.fieldId + "\n" +
+              "圃場側: " + state.boundaryField + "\n" +
+              "フィールドの選択を確認してください。",
+              true
+            );
+
             return;
           }
-          show(ui.fieldSection); show(ui.cellSection); show(ui.statsSection); show(ui.exportSection);
-          ui.checkRunBtn.disabled = true; ui.outsideZeroBtn.disabled = true;
-          setStatus(ui.fieldStatus, matched.length+"圃場が見つかりました。");
-          setStatus(ui.boundaryMatchInfo, unmatched.length ? "一部の圃場キーが一致しません。\n一致: "+matched.length+"件\n不一致: "+unmatched.length+"件\n例: "+unmatched.slice(0,5).join(", ") : "圃場キーはすべて一致しています。\n対象: "+matched.length+"圃場", unmatched.length>0);
-        } catch(error) {
+
+          if (unmatched.length) {
+
+            const sample = unmatched.slice(0, 5).join(", ");
+
+            setStatus(
+              ui.boundaryMatchInfo,
+              "警告: 一部の圃場 ID が一致しません。\n" +
+              "一致: " + matched.length + " 件\n" +
+              "不一致: " + unmatched.length + " 件\n" +
+              "例: " + sample + (unmatched.length > 5 ? " ほか" : ""),
+              true
+            );
+
+            return;
+          }
+
+          setStatus(
+            ui.boundaryMatchInfo,
+            "圃場 ID はすべて一致しています。\n対象: " + matched.length + " 圃場"
+          );
+
+        } catch (error) {
           console.error(error);
-          [ui.fieldSection,ui.cellSection,ui.pdvSection,ui.statsSection,ui.exportSection].forEach(hide);
-          setStatus(ui.boundaryMatchInfo,"照合に失敗しました: "+errorText(error),true);
+          setStatus(ui.boundaryMatchInfo, "照合に失敗しました: " + errorText(error), true);
         }
       };
 
@@ -2821,7 +2898,7 @@
           alert.textContent =
             "圃場ポリゴンが見つかりません。\n" +
             "圃場 ID: " + result.fieldId + "\n" +
-            "圃場 ID フィールドの選択を確認してください。";
+            "圃場レイヤーのキーフィールドの選択を確認してください。";
 
           container.append(alert);
 
@@ -2943,8 +3020,10 @@
           ui.outsideZeroBtn.disabled = true;
           ui.checkResult.innerHTML = "";
 
-          // 選択中の圃場のみを対象とする
-          const targets = state.currentField ? [state.currentField] : [];
+          // 対象は選択中の圃場、未選択なら全圃場
+          const targets = state.currentField
+            ? [state.currentField]
+            : state.fields;
 
           if (!targets.length) {
             ui.checkRunBtn.disabled = false;
@@ -2988,6 +3067,7 @@
 
             clearSelection();
             addToSelection(collected);
+            ui.outsideZeroBtn.disabled = false;
 
             setStatus(
               ui.checkStatus,
@@ -3020,10 +3100,7 @@
       };
 
       ui.outsideZeroBtn.onclick = async function () {
-        if (!state.selection.size) {
-          setStatus(ui.checkStatus, "TZN 0 に変更する圃場外セルがありません。", true);
-          return;
-        }
+        if (!state.selection.size) return;
         ui.outsideZeroBtn.disabled = true;
         await applyTznToSelection(0);
         clearSelection();
@@ -3032,7 +3109,7 @@
       };
 
       // ==========================================================
-      // 7. 散布量の統計
+      // 8. 散布量の統計
       //
       //  セル面積は測地面積から求める。
       //  散布量(kg) = PDV(mg/m²) × 面積(m²) ÷ 1,000,000
@@ -3575,7 +3652,7 @@
       ui.statsRefreshBtn.onclick = refreshStats;
 
       // ==========================================================
-      // 8. ISOXML の出力
+      // 9. ISOXML の出力
       //
       //  ArcGIS Pro スクリプトツール ExportMultiFieldISOXML.py の
       //  ロジックを踏襲する。
