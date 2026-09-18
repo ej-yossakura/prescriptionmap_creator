@@ -3,93 +3,114 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ISOXML 処方マップビューア</title>
+  <title>ISOXML検証用ビューア</title>
   <link rel="stylesheet" href="https://js.arcgis.com/4.34/esri/themes/light/main.css">
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <script src="https://js.arcgis.com/4.34/"></script>
   <style>
-    html, body, #app { height:100%; margin:0; font-family:system-ui,sans-serif; color:#1f2937; }
-    #app { display:grid; grid-template-columns:380px 1fr; }
-    #panel { padding:16px; overflow:auto; border-right:1px solid #cbd5e1; background:#fff; }
-    #viewDiv { height:100%; }
-    h1 { margin:0 0 6px; font-size:20px; }
-    h2 { margin:18px 0 8px; font-size:15px; border-bottom:2px solid #007ac2; padding-bottom:4px; }
-    h3 { margin:12px 0 4px; font-size:12px; color:#35566f; }
-    .small { font-size:12px; color:#64748b; line-height:1.5; }
-    button, select, input { box-sizing:border-box; width:100%; margin-top:8px; padding:8px; font-size:13px; }
-    button { border:0; border-radius:4px; background:#007ac2; color:#fff; cursor:pointer; }
-    button.secondary { background:#64748b; }
-    button:disabled { background:#94a3b8; cursor:default; }
-    #dropZone { margin-top:12px; padding:24px 14px; border:2px dashed #7c8da0; border-radius:8px; text-align:center; background:#f8fafc; transition:.15s; }
-    #dropZone.dragover { border-color:#007ac2; background:#eaf6fd; transform:scale(1.01); }
-    #status, #statsStatus { white-space:pre-wrap; min-height:44px; padding:10px; border-radius:4px; background:#f1f5f9; font-size:12px; }
-    .field-row { display:flex; align-items:center; gap:7px; margin:6px 0; font-size:12px; }
-    .field-row input { width:auto; margin:0; }
-    .legend-row { display:grid; grid-template-columns:25px 28px 1fr; gap:7px; align-items:start; margin:7px 0; font-size:12px; }
-    .swatch { display:inline-block; width:21px; height:14px; border:1px solid #475569; margin-top:2px; vertical-align:middle; }
-
-    /* 統計タブ */
-    .tabs { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px; }
-    .tabs button { margin:0; padding:7px 4px; font-size:12px; background:#fff; color:#1f2937; border:1px solid #c3ccd6; }
-    .tabs button:hover:not(.active) { background:#eef5fb; border-color:#007ac2; }
-    .tabs button.active { background:#007ac2; color:#fff; border-color:#007ac2; font-weight:600; }
-
-    /* 統計テーブル */
-    table.grid { width:100%; border-collapse:collapse; margin-top:6px; font-size:12px; }
-    table.grid th, table.grid td { border:1px solid #d7dde3; padding:4px 5px; text-align:center; }
-    table.grid th { background:#eef2f6; font-weight:600; }
-    table.grid td.num { text-align:right; }
-    table.grid tr.total td { background:#eef2f6; font-weight:600; }
-
-    dl.summary { margin:8px 0 0; display:grid; grid-template-columns:1fr auto; gap:3px 10px; font-size:12px; }
-    dl.summary dt { color:#64748b; }
-    dl.summary dd { margin:0; text-align:right; font-weight:600; }
-    dl.summary dt.divider, dl.summary dd.divider { border-top:1px solid #d7dde3; margin-top:4px; padding-top:5px; }
-
-    @media(max-width:790px){ #app{grid-template-columns:1fr;grid-template-rows:auto 1fr} #panel{max-height:48vh;border-right:0;border-bottom:1px solid #cbd5e1} }
+    :root {
+      --forest:#174f3a;
+      --forest-dark:#10392b;
+      --leaf:#2f7658;
+      --mint:#eaf3ee;
+      --sand:#f5f2ea;
+      --ink:#1d2a25;
+      --muted:#66756e;
+      --line:#d8e1dc;
+      --card:#ffffff;
+      --shadow:0 10px 30px rgba(23,79,58,.10);
+    }
+    html,body,#app{height:100%;margin:0;font-family:"Segoe UI","Yu Gothic UI",system-ui,sans-serif;color:var(--ink)}
+    body{background:#edf2ef}
+    #app{display:grid;grid-template-columns:390px 1fr;position:relative;overflow:hidden}
+    #panel{box-sizing:border-box;padding:0 18px 28px;overflow:auto;background:#f7f9f7;border-right:1px solid var(--line);box-shadow:6px 0 24px rgba(24,57,43,.08);z-index:5}
+    #viewDiv{height:100%;min-width:0}
+    .app-header{position:sticky;top:0;z-index:4;margin:0 -18px 16px;padding:20px 20px 17px;background:linear-gradient(145deg,var(--forest-dark),var(--forest));color:#fff;box-shadow:0 8px 20px rgba(16,57,43,.18)}
+    .app-kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.74;margin-bottom:5px}
+    h1{margin:0;font-size:21px;line-height:1.3;font-weight:700}
+    .app-header .small{margin:7px 0 0;color:rgba(255,255,255,.78)}
+    .panel-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;margin:0 0 13px;box-shadow:var(--shadow)}
+    .card-title{display:flex;align-items:center;gap:9px;margin:0 0 10px;font-size:14px;color:var(--forest);font-weight:700}
+    .card-index{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--mint);color:var(--forest);font-size:11px;font-weight:800}
+    h2{margin:0 0 10px;font-size:14px;color:var(--forest);border:0;padding:0}
+    h3{margin:13px 0 5px;font-size:12px;color:var(--leaf)}
+    .small{font-size:12px;color:var(--muted);line-height:1.55}
+    button,select,input{box-sizing:border-box;width:100%;margin-top:8px;padding:9px 10px;font-size:13px;border-radius:8px}
+    select,input{border:1px solid #bfcac4;background:#fff;color:var(--ink)}
+    select:focus,input:focus{outline:2px solid rgba(47,118,88,.22);border-color:var(--leaf)}
+    button{border:0;background:var(--forest);color:#fff;cursor:pointer;font-weight:650;transition:background .15s,transform .15s}
+    button:hover:not(:disabled){background:var(--forest-dark);transform:translateY(-1px)}
+    button.secondary{background:#eef2ef;color:var(--forest);border:1px solid #bfcac4}
+    button.secondary:hover:not(:disabled){background:#e2ebe6}
+    button:disabled{background:#a8b2ad;color:#f4f5f4;cursor:default;transform:none}
+    .button-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.button-row button{margin-top:8px}
+    #dropZone{margin-top:8px;padding:22px 13px;border:1.5px dashed #8ca398;border-radius:12px;text-align:center;background:linear-gradient(180deg,#fbfdfc,#f0f6f2);transition:.15s}
+    #dropZone.dragover{border-color:var(--leaf);background:var(--mint);transform:scale(1.01)}
+    #dropZone strong{color:var(--forest);font-size:13px}
+    #status,#statsStatus{white-space:pre-wrap;min-height:38px;padding:10px;border-radius:9px;background:#f1f5f2;border-left:3px solid var(--leaf);font-size:12px;line-height:1.55}
+    .field-row{display:flex;align-items:center;gap:7px;margin:6px 0;font-size:12px}.field-row input{width:auto;margin:0}
+    .legend-row{display:grid;grid-template-columns:25px 28px 1fr;gap:7px;align-items:start;margin:7px 0;font-size:12px}
+    .swatch{display:inline-block;width:21px;height:14px;border:1px solid #65756d;border-radius:3px;margin-top:2px;vertical-align:middle}
+    .tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}.tabs button{margin:0;padding:7px 4px;background:#fff;color:var(--forest);border:1px solid #bdcac3}.tabs button:hover:not(.active){background:var(--mint)}.tabs button.active{background:var(--forest);color:#fff;border-color:var(--forest)}
+    table.grid{width:100%;border-collapse:separate;border-spacing:0;margin-top:8px;font-size:11px;overflow:hidden;border:1px solid var(--line);border-radius:9px}table.grid th,table.grid td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:5px;text-align:center}table.grid tr>*:last-child{border-right:0}table.grid tbody tr:last-child td{border-bottom:0}table.grid th{background:#edf4f0;font-weight:700;color:var(--forest)}table.grid td.num{text-align:right}table.grid tr.total td{background:#edf4f0;font-weight:700}
+    dl.summary{margin:8px 0 0;display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:12px}dl.summary dt{color:var(--muted)}dl.summary dd{margin:0;text-align:right;font-weight:700;color:var(--forest)}dl.summary dt.divider,dl.summary dd.divider{border-top:1px solid var(--line);margin-top:4px;padding-top:6px}
+    .map-badge{position:absolute;left:408px;bottom:18px;z-index:3;background:rgba(16,57,43,.90);color:#fff;padding:8px 12px;border-radius:20px;font-size:11px;box-shadow:0 6px 18px rgba(0,0,0,.18);pointer-events:none}
+    @media(max-width:790px){#app{grid-template-columns:1fr;grid-template-rows:minmax(280px,48vh) 1fr;overflow:auto}#panel{max-height:48vh;border-right:0;border-bottom:1px solid var(--line)}#viewDiv{min-height:52vh}.map-badge{display:none}}
   </style>
 </head>
 <body>
 <div id="app">
-  <aside id="panel">
-    <h1>ISOXML 処方マップビューア</h1>
-    <p class="small">ISOXML をブラウザー内で解析して地図表示します。サインインは不要です。</p>
+    <aside id="panel">
+      <header class="app-header">
+        <div class="app-kicker">ISOXML Quality Review</div>
+        <h1>ISOXML検証用ビューア</h1>
+        <p class="small">ISOXMLをブラウザー内で解析し、圃場、TZN、散布量を地図で確認します。</p>
+      </header>
 
-    <div id="dropZone">
-      <strong>ZIPをここへドラッグ＆ドロップ</strong><br>
-      <span class="small">または下のボタンから選択<br>TASKDATA.XML と GRD*.bin の複数選択にも対応</span>
-      <input id="files" type="file" multiple accept=".zip,.xml,.bin,.txt">
-    </div>
+      <section class="panel-card">
+        <div class="card-title"><span class="card-index">1</span>ファイルを開く</div>
+        <div id="dropZone">
+          <strong>ZIPをドラッグ＆ドロップ</strong><br>
+          <span class="small">TASKDATA.XMLとGRD*.binの複数選択にも対応</span>
+          <input id="files" type="file" multiple accept=".zip,.xml,.bin,.txt">
+        </div>
+        <div class="button-row">
+          <button id="loadBtn">読み込んで表示</button>
+          <button id="clearBtn" class="secondary">表示をクリア</button>
+        </div>
+        <h3>読み込み状態</h3>
+        <div id="status">ISOXMLファイルを選択してください。</div>
+      </section>
 
-    <button id="loadBtn">読み込んで表示</button>
-    <button id="clearBtn" class="secondary">表示をクリア</button>
+      <section class="panel-card">
+        <div class="card-title"><span class="card-index">2</span>圃場を選ぶ</div>
+        <p class="small">圃場を選択すると、その圃場のセルだけを地図に表示します。</p>
+        <select id="fieldSelect" disabled>
+          <option value="">圃場を選択してください</option>
+        </select>
+        <div class="button-row">
+          <button id="zoomBtn" disabled>選択圃場へズーム</button>
+          <button id="showAllBtn" class="secondary" disabled>全圃場を表示</button>
+        </div>
+        <div id="fields"></div>
+      </section>
 
-    <h2>状態</h2>
-    <div id="status">ISOXMLファイルを選択してください。</div>
+      <section class="panel-card">
+        <div class="card-title"><span class="card-index">3</span>表示を確認</div>
+        <h2>TZN凡例</h2>
+        <div id="legend"></div>
+      </section>
 
-    <h2>圃場選択・ズーム</h2>
-    <p class="small">
-      圃場を選択すると、その圃場のセルだけを表示します。
-    </p>
-    <select id="fieldSelect" disabled>
-      <option value="">圃場を選択してください</option>
-    </select>
-    <button id="zoomBtn" disabled>選択圃場へズーム</button>
-    <button id="showAllBtn" class="secondary" disabled>すべての圃場を表示</button>
-    <div id="fields"></div>
-
-    <h2>TZN凡例</h2>
-    <div id="legend"></div>
-
-    <h2>散布量の統計</h2>
-    <div class="tabs">
-      <button type="button" id="statsFieldTab" class="active">選択圃場</button>
-      <button type="button" id="statsAllTab">全圃場</button>
-    </div>
-    <div id="statsContent"></div>
-    <div id="statsStatus">ISOXMLを読み込んでください。</div>
-  </aside>
-  <main id="viewDiv"></main>
+      <section class="panel-card">
+        <div class="card-title"><span class="card-index">4</span>検証結果</div>
+        <div class="tabs">
+          <button type="button" id="statsFieldTab" class="active">選択圃場</button>
+          <button type="button" id="statsAllTab">全圃場</button>
+        </div>
+        <div id="statsContent"></div>
+        <div id="statsStatus">ISOXMLを読み込んでください。</div>
+      </section>
+    </aside> <main id="viewDiv"></main>
 </div>
 
 <script>
