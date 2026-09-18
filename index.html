@@ -1326,12 +1326,12 @@
 
           ui.exportBtn.disabled = !exportCheck.ok;
 
-          await loadFieldList();
-
-          show(ui.fieldSection);
-          show(ui.cellSection);
-          show(ui.statsSection);
-          show(ui.exportSection);
+          state.fields = [];
+          state.matchedFields = [];
+          [ui.fieldSection, ui.cellSection, ui.pdvSection,
+            ui.statsSection, ui.exportSection].forEach(hide);
+          setStatus(ui.boundaryMatchInfo,
+            "圃場レイヤーとキーフィールドを選択してください。");
 
         } catch (error) {
           console.error(error);
@@ -1515,6 +1515,13 @@
 
 
       function boundaryWhereClause(fieldId) {
+        const field = state.boundaryLayer.fields.find(function (item) {
+          return item.name === state.boundaryField;
+        });
+        const numericTypes = ["small-integer", "integer", "single", "double", "long"];
+        if (field && numericTypes.indexOf(field.type) >= 0 && Number.isFinite(Number(fieldId))) {
+          return state.boundaryField + " = " + Number(fieldId);
+        }
         const escaped = String(fieldId).replace(/'/g, "''");
         return state.boundaryField + " = '" + escaped + "'";
       }
@@ -2627,83 +2634,84 @@
 
       // 圃場 ID の一致状況を確認する
       boundary.verifyFieldMatch = async function () {
-
         try {
-
+          if (!state.rxLayer || !state.resolved.fieldId ||
+              !state.boundaryLayer || !state.boundaryField) {
+            setStatus(ui.boundaryMatchInfo,
+              "施肥設計レイヤー、圃場レイヤー、キーフィールドを選択してください。");
+            return;
+          }
           setStatus(ui.boundaryMatchInfo, "照合中...");
           ui.checkRunBtn.disabled = true;
 
-          const query = state.boundaryLayer.createQuery();
-          query.where = "1=1";
-          query.outFields = [state.boundaryField];
-          query.returnDistinctValues = true;
-          query.returnGeometry = false;
+          async function distinctValues(layer, fieldName) {
+            const query = layer.createQuery();
+            query.where = "1=1";
+            query.outFields = [fieldName];
+            query.returnGeometry = false;
+            query.returnDistinctValues = true;
+            const result = await layer.queryFeatures(query);
+            const features = result && Array.isArray(result.features)
+              ? result.features : [];
+            return features.map(function (feature) {
+              return feature.attributes[fieldName];
+            }).filter(function (value) {
+              return value !== null && value !== undefined && String(value) !== "";
+            });
+          }
 
-          const result = await state.boundaryLayer.queryFeatures(query);
-
-          const boundaryIds = new Set(
-            result.features
-              .map(function (feature) {
-                return String(feature.attributes[state.boundaryField]);
-              })
-              .filter(function (value) {
-                return value !== "null" && value !== "";
-              })
-          );
-
-          // 施肥設計側の圃場 ID と照合する
-          const matched = [];
-          const unmatched = [];
-
-          state.fields.forEach(function (fieldId) {
-
-            if (boundaryIds.has(String(fieldId))) {
-              matched.push(fieldId);
-            } else {
-              unmatched.push(fieldId);
-            }
+          const rxIds = await distinctValues(state.rxLayer, state.resolved.fieldId);
+          const boundaryIds = await distinctValues(state.boundaryLayer, state.boundaryField);
+          const boundarySet = new Set(boundaryIds.map(String));
+          const matched = rxIds.filter(function (id) {
+            return boundarySet.has(String(id));
+          });
+          const unmatched = rxIds.filter(function (id) {
+            return !boundarySet.has(String(id));
           });
 
-          ui.checkRunBtn.disabled = false;
+          state.matchedFields = matched.slice();
+          state.fields = matched.slice().sort(function (a, b) {
+            return String(a).localeCompare(String(b), "ja", { numeric: true });
+          });
+          ui.fieldSelect.innerHTML =
+            '<option value="">圃場を選択してください</option>';
+          state.fields.forEach(function (fieldId) {
+            const option = document.createElement("option");
+            option.value = String(fieldId);
+            option.textContent = String(fieldId);
+            ui.fieldSelect.append(option);
+          });
 
           if (!matched.length) {
-
-            setStatus(
-              ui.boundaryMatchInfo,
-              "警告: 圃場 ID が 1 件も一致しません。\n" +
-              "施肥設計側: " + state.resolved.fieldId + "\n" +
-              "圃場側: " + state.boundaryField + "\n" +
-              "フィールドの選択を確認してください。",
-              true
-            );
-
+            [ui.fieldSection, ui.cellSection, ui.pdvSection,
+              ui.statsSection, ui.exportSection].forEach(hide);
+            setStatus(ui.boundaryMatchInfo,
+              "警告: 圃場キーが1件も一致しません。\n" +
+              "施肥設計側: " + state.resolved.fieldId + "（" + rxIds.length + "件）\n" +
+              "圃場側: " + state.boundaryField + "（" + boundaryIds.length + "件）",
+              true);
             return;
           }
 
-          if (unmatched.length) {
-
-            const sample = unmatched.slice(0, 5).join(", ");
-
-            setStatus(
-              ui.boundaryMatchInfo,
-              "警告: 一部の圃場 ID が一致しません。\n" +
-              "一致: " + matched.length + " 件\n" +
-              "不一致: " + unmatched.length + " 件\n" +
-              "例: " + sample + (unmatched.length > 5 ? " ほか" : ""),
-              true
-            );
-
-            return;
-          }
-
-          setStatus(
-            ui.boundaryMatchInfo,
-            "圃場 ID はすべて一致しています。\n対象: " + matched.length + " 圃場"
-          );
-
+          show(ui.fieldSection);
+          show(ui.cellSection);
+          show(ui.statsSection);
+          show(ui.exportSection);
+          ui.checkRunBtn.disabled = true;
+          const message = unmatched.length
+            ? "一部の圃場キーが一致しません。\n一致: " + matched.length +
+              "件\n不一致: " + unmatched.length + "件\n例: " +
+              unmatched.slice(0, 5).join(", ")
+            : "圃場キーはすべて一致しています。\n対象: " + matched.length + "圃場";
+          setStatus(ui.boundaryMatchInfo, message, unmatched.length > 0);
+          setStatus(ui.fieldStatus, matched.length + "圃場が見つかりました。");
         } catch (error) {
           console.error(error);
-          setStatus(ui.boundaryMatchInfo, "照合に失敗しました: " + errorText(error), true);
+          [ui.fieldSection, ui.cellSection, ui.pdvSection,
+            ui.statsSection, ui.exportSection].forEach(hide);
+          setStatus(ui.boundaryMatchInfo,
+            "照合に失敗しました: " + errorText(error), true);
         }
       };
 
