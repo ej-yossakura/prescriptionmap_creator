@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ISOXML 施肥設計アプリ V16</title>
+  <title>ISOXML 施肥設計アプリ V17</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.34/esri/themes/light/main.css">
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -435,7 +435,7 @@
   <div id="app">
     <aside id="panel">
 
-      <h1>ISOXML 施肥設計アプリ V16</h1>
+      <h1>ISOXML 施肥設計アプリ V17</h1>
       <p class="small">施肥設計レイヤーを編集し、ISOXML を出力します。</p>
 
       <!-- ========== 1. サインイン ========== -->
@@ -546,6 +546,7 @@
 
         <h3>圃場外への散布チェック（任意）</h3>
         <button id="checkRunBtn" class="warn" disabled>圃場外の散布をチェック</button>
+        <button id="outsideZeroBtn" class="secondary" disabled>選択された圃場外セルを TZN 0 にする</button>
 
         <div class="check-row">
           <input type="checkbox" id="checkSelectResult" checked>
@@ -1596,7 +1597,7 @@
           // 全圃場を表示に戻す
           applyFieldFilter(null);
           await applyBoundaryFilter(null);
-          ui.outsideZeroBtn.disabled = true;
+          if (ui.outsideZeroBtn) ui.outsideZeroBtn.disabled = true;
 
           setStatus(ui.fieldStatus, "全圃場を表示しています。");
 
@@ -1610,7 +1611,7 @@
         // 選択圃場以外を非表示にする
         applyFieldFilter(fieldId);
         await applyBoundaryFilter(fieldId);
-        ui.outsideZeroBtn.disabled = true;
+        if (ui.outsideZeroBtn) ui.outsideZeroBtn.disabled = true;
 
         show(ui.pdvSection);
 
@@ -3017,7 +3018,7 @@
         try {
 
           ui.checkRunBtn.disabled = true;
-          ui.outsideZeroBtn.disabled = true;
+          if (ui.outsideZeroBtn) ui.outsideZeroBtn.disabled = true;
           ui.checkResult.innerHTML = "";
 
           // 対象は選択中の圃場、未選択なら全圃場
@@ -3067,7 +3068,7 @@
 
             clearSelection();
             addToSelection(collected);
-            ui.outsideZeroBtn.disabled = false;
+            if (ui.outsideZeroBtn) ui.outsideZeroBtn.disabled = false;
 
             setStatus(
               ui.checkStatus,
@@ -3099,9 +3100,9 @@
         }
       };
 
-      ui.outsideZeroBtn.onclick = async function () {
+      if (ui.outsideZeroBtn) ui.outsideZeroBtn.onclick = async function () {
         if (!state.selection.size) return;
-        ui.outsideZeroBtn.disabled = true;
+        if (ui.outsideZeroBtn) ui.outsideZeroBtn.disabled = true;
         await applyTznToSelection(0);
         clearSelection();
         ui.checkResult.innerHTML = "";
