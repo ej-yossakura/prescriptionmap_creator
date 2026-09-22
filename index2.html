@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>可変施肥設計ワークベンチ v19a.2</title>
+  <title>可変施肥設計ワークベンチ v19a.3</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.34/esri/themes/light/main.css">
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -429,57 +429,42 @@
       }
     }
   
-    :root{--v19-brand:#007ac2;--v19-brand-hover:#00619b;--v19-bg:#f3f4f5;--v19-surface:#fff;--v19-surface-2:#f7f8f8;--v19-border:#d9d9d9;--v19-text:#151515;--v19-text-2:#4a4a4a;--v19-shadow:0 1px 3px rgba(0,0,0,.12)}
-    html,body,#app{background:var(--v19-bg)} #app{grid-template-columns:minmax(0,1fr) 410px}
-    #viewDiv{grid-column:1;grid-row:1;min-width:0;background:#eef1f3} #panel{grid-column:2;grid-row:1;padding:0 14px 28px;border-right:0;border-left:1px solid var(--v19-border);background:var(--v19-bg);box-shadow:-2px 0 8px rgba(0,0,0,.06)}
-    #panel>h1{position:sticky;top:0;z-index:5;margin:0 -14px;padding:16px 48px 4px 16px;background:var(--v19-surface);font-size:18px} #panel>h1::after{content:"v19a.2";position:absolute;right:16px;top:16px;padding:2px 7px;border-radius:10px;color:#fff;background:var(--v19-brand);font-size:10px}
-    #panel>h1+.small{position:sticky;top:38px;z-index:5;margin:0 -14px 12px;padding:2px 16px 13px;background:#fff;border-bottom:1px solid var(--v19-border)}
-    #panel h2{margin:12px 0 0;padding:12px;border:1px solid var(--v19-border);border-bottom:0;border-radius:4px 4px 0 0;background:var(--v19-surface-2);font-size:14px}
-    .section{padding:0 12px 12px;background:#fff;border:1px solid var(--v19-border);border-top:0;border-radius:0 0 4px 4px;box-shadow:var(--v19-shadow)} .section>h2{margin-left:-12px;margin-right:-12px}
-    input,select,button{border-radius:3px;min-height:36px} input,select{border:1px solid #a9a9a9;background:#fff} button{background:var(--v19-brand);font-weight:600} button:hover:not(:disabled){background:var(--v19-brand-hover)} button.secondary{background:#fff;color:var(--v19-brand);border:1px solid var(--v19-brand)}
-    .info-box{border:1px solid var(--v19-border);background:var(--v19-surface-2)} table.grid{background:#fff}
-    @media(max-width:800px){#app{grid-template-columns:1fr;grid-template-rows:minmax(52vh,1fr) auto}#viewDiv{grid-column:1;grid-row:1;min-height:52vh}#panel{grid-column:1;grid-row:2;max-height:48vh;border-left:0;border-top:1px solid var(--v19-border)}}
-
-    /* v19a.2: independent ArcGIS account menu, no workflow numbers */
-    #panel h2 { padding-left: 12px; }
-    #panel h2::before { content: none !important; display: none !important; }
-    #accountMenu {
-      position: fixed; top: 12px; right: 426px; z-index: 20;
-      width: 250px; padding: 10px; background: #fff;
-      border: 1px solid var(--v19-border); border-radius: 4px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.18);
-    }
-    #accountMenu summary { cursor:pointer; list-style:none; color:var(--v19-brand); font-size:13px; font-weight:600; }
-    #accountMenu summary::-webkit-details-marker { display:none; }
-    #accountMenu summary::before { content:"●"; margin-right:7px; color:var(--v19-brand); }
-    #accountMenu[open] summary { padding-bottom:8px; border-bottom:1px solid var(--v19-border); }
-    #accountMenu .account-body { padding-top:8px; }
-    #accountMenu .info-box { margin-top:0; }
-    .optional-block { margin-top:14px; border:1px solid var(--v19-border); border-radius:4px; background:#fff; box-shadow:var(--v19-shadow); }
-    .optional-block > summary { cursor:pointer; padding:12px; color:var(--v19-text); font-weight:600; background:var(--v19-surface-2); }
-    .optional-block > summary span { display:block; color:var(--v19-text-2); font-size:11px; font-weight:400; margin-top:2px; }
-    .optional-block #exportSection { margin:0; border:0; box-shadow:none; }
-    #tznButton0 { grid-column: span 2; }
-    @media (max-width: 800px) { #accountMenu { top:8px; right:8px; width:220px; } }
-  </style>
+    :root{--brand:#007ac2;--brand-hover:#00619b;--bg:#f3f4f5;--surface:#fff;--surface2:#f7f8f8;--border:#d9d9d9;--text:#151515;--text2:#4a4a4a;--shadow:0 1px 3px rgba(0,0,0,.12)}
+    #app{grid-template-columns:minmax(0,1fr) 410px;background:var(--bg)}
+    #viewDiv{grid-column:1;grid-row:1;min-width:0;background:#eef1f3}
+    #panel{grid-column:2;grid-row:1;padding:0 14px 28px;border-right:0;border-left:1px solid var(--border);background:var(--bg);box-shadow:-2px 0 8px rgba(0,0,0,.06)}
+    .app-header{position:sticky;top:0;z-index:20;margin:0 -14px 12px;padding:14px 12px;background:#fff;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start}
+    .app-title h1{font-size:17px;margin:0 0 4px}.app-title p{margin:0;font-size:12px;color:var(--text2);line-height:1.45}.version{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:10px;background:var(--brand);color:#fff;font-size:9px;vertical-align:2px}
+    #accountMenu{position:relative}.account-trigger{width:auto;min-width:38px;margin:0;padding:6px 9px;border:1px solid transparent;background:#fff;color:var(--brand);font-size:12px}.account-trigger:hover{background:#eef7fc;border-color:#b7dcef}.account-popover{display:none;position:absolute;right:0;top:40px;width:270px;padding:12px;background:#fff;border:1px solid var(--border);box-shadow:0 3px 12px rgba(0,0,0,.22);z-index:30}.account-popover.open{display:block}.account-popover .info-box{margin:0 0 8px}
+    #panel h2{margin:12px 0 0;padding:11px 12px;border:1px solid var(--border);border-bottom:0;border-radius:4px 4px 0 0;background:var(--surface2);font-size:14px;color:var(--text)}
+    .section{padding:0 12px 12px;background:#fff;border:1px solid var(--border);border-top:0;border-radius:0 0 4px 4px;box-shadow:var(--shadow)}.section>h2{margin-left:-12px;margin-right:-12px}
+    input,select,button{border-radius:3px;min-height:36px}input,select{border:1px solid #a9a9a9;background:#fff}button{background:var(--brand);font-weight:600}button:hover:not(:disabled){background:var(--brand-hover)}button.secondary{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+    .webmap-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.webmap-actions button{margin:0}.webmap-results{display:grid;gap:8px;margin-top:10px;max-height:330px;overflow:auto}.webmap-card{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:8px;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left}.webmap-card:hover{border-color:var(--brand);background:#f5fbff}.webmap-card.selected{outline:2px solid var(--brand);outline-offset:-2px}.webmap-card img{width:96px;height:64px;object-fit:cover;background:#eef1f3}.webmap-card-title{font-weight:600;font-size:13px;color:var(--text)}.webmap-card-meta{font-size:11px;color:var(--text2);margin-top:2px}.webmap-card-desc{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}#webmapSelect{display:none}
+    .tzn-buttons{grid-template-columns:repeat(3,1fr)}#tznButton0{grid-column:auto}
+    .optional-block{margin-top:14px;border:1px solid var(--border);border-radius:4px;background:#fff;box-shadow:var(--shadow)}.optional-block>summary{cursor:pointer;padding:12px;background:var(--surface2);font-weight:600}.optional-block>summary span{display:block;font-size:11px;font-weight:400;color:var(--text2);margin-top:2px}.optional-block #exportSection{margin:0;border:0;box-shadow:none}
+    .info-box{border:1px solid var(--border);background:var(--surface2)}
+    @media(max-width:800px){#app{grid-template-columns:1fr;grid-template-rows:minmax(52vh,1fr) auto}#viewDiv{grid-column:1;grid-row:1;min-height:52vh}#panel{grid-column:1;grid-row:2;max-height:48vh;border-left:0;border-top:1px solid var(--border)}}
+</style>
 </head>
 
 <body>
   <div id="app">
     <aside id="panel">
 
-      <h1>可変施肥設計ワークベンチ</h1>
-      <p class="small">ArcGIS Online のデータを使い、圃場ごとに処方設計と設計結果の確認を行います。</p>
-      <!-- ArcGIS Online account menu: independent from prescription workflow -->
-      <details id="accountMenu">
-        <summary>ArcGIS Online</summary>
-        <div class="account-body">
-          <div id="userInfo" class="info-box">未ログイン</div>
-          <button id="signinBtn">サインイン</button>
-          <button id="signoutBtn" class="secondary" style="display:none;">サインアウト</button>
+      <header class="app-header">
+        <div class="app-title">
+          <h1>可変施肥設計ワークベンチ <span class="version">v19a.3</span></h1>
+          <p>圃場ごとに可変施肥の設計を行うアプリ</p>
         </div>
-      </details>
-
+        <div id="accountMenu">
+          <button id="accountTrigger" class="account-trigger" type="button" aria-expanded="false" title="ArcGIS Online アカウント">●</button>
+          <div id="accountPopover" class="account-popover">
+            <div id="userInfo" class="info-box">未ログイン</div>
+            <button id="signinBtn">サインイン</button>
+            <button id="signoutBtn" class="secondary" style="display:none;">サインアウト</button>
+          </div>
+        </div>
+      </header>
       <!-- ========== 2. Webマップ読込 ========== -->
       <section id="webmapSection" class="section">
         <h2>データ選択｜Web マップ</h2>
@@ -487,11 +472,14 @@
           タグ「Prescription-Map Design」を持つ Web マップのみを対象とします。
         </p>
         <input id="webmapSearch" type="text" placeholder="Web マップ名で絞り込み（空欄可）">
-        <button id="webmapSearchBtn">Web マップを検索</button>
-        <select id="webmapSelect" size="5" disabled>
+        <div class="webmap-actions">
+          <button id="webmapSearchBtn">検索</button>
+          <button id="webmapLoadBtn" disabled>開く</button>
+        </div>
+        <select id="webmapSelect" disabled aria-hidden="true">
           <option value="">検索するとここに表示されます</option>
         </select>
-        <button id="webmapLoadBtn" disabled>選択した Web マップを開く</button>
+        <div id="webmapResults" class="webmap-results" aria-live="polite"></div>
         <div id="webmapStatus" class="info-box">未読込</div>
       </section>
 
@@ -539,7 +527,7 @@
 
       <!-- ========== 5. TZN編集 ========== -->
       <section id="cellSection" class="section">
-        <h2>処方設計｜TZN</h2>
+        <h2>可変施肥設計｜TZN</h2>
         <p class="small">
           ツールを選び、地図上で範囲を描くと、その中のセルを選択します。
           描くたびに新しい選択に置き換わります。
@@ -587,7 +575,7 @@
         <div class="check-row">
           <input type="checkbox" id="checkSelectResult" checked>
           <label for="checkSelectResult">
-            検出したセルを選択状態にする（処方設計で編集できます）
+            検出したセルを選択状態にする（セクション 5 で編集できます）
           </label>
         </div>
 
@@ -597,7 +585,7 @@
 
       <!-- ========== 6. PDV編集 ========== -->
       <section id="pdvSection" class="section">
-        <h2>処方設計｜散布量</h2>
+        <h2>可変施肥設計｜散布量</h2>
         <p class="small">
           選択した圃場の TZN ごとに散布量を設定します。
           同一圃場・同一 TZN のセルには同じ値が書き込まれます。
@@ -644,9 +632,8 @@
       </section>
 
       <!-- ========== 9. ISOXML出力 ========== -->
-      <details class="optional-block">
-        <summary>オプション<span>ISOXML 出力</span></summary>
-        <section id="exportSection" class="section">
+      <details class="optional-block"><summary>オプション<span>ISOXML 出力</span></summary>
+<section id="exportSection" class="section">
         <h2>ISOXML 出力</h2>
         <p class="small">
           編集後のレイヤーから TASKDATA.XML と GRD バイナリを生成し、ZIP でダウンロードします。
@@ -665,6 +652,7 @@
   </div>
 
   <script>
+    // v19a.3 safe UI evolution based on v18.
     require([
       "esri/Map",
       "esri/WebMap",
@@ -816,6 +804,7 @@
         webmapSelect: dom("webmapSelect"),
         webmapLoadBtn: dom("webmapLoadBtn"),
         webmapStatus: dom("webmapStatus"),
+        webmapResults: dom("webmapResults"),
 
         layerSection: dom("layerSection"),
         rxLayerSelect: dom("rxLayerSelect"),
@@ -867,6 +856,18 @@
         exportStatus: dom("exportStatus")
       };
 
+      const accountTrigger = dom("accountTrigger");
+      const accountPopover = dom("accountPopover");
+      accountTrigger.onclick = function () {
+        const open = accountPopover.classList.toggle("open");
+        accountTrigger.setAttribute("aria-expanded", String(open));
+      };
+      document.addEventListener("click", function (event) {
+        if (!dom("accountMenu").contains(event.target)) {
+          accountPopover.classList.remove("open");
+          accountTrigger.setAttribute("aria-expanded", "false");
+        }
+      });
       const state = {
         portal: null,
         webmapItems: new globalThis.Map(),
@@ -1041,6 +1042,7 @@
 
         ui.signinBtn.style.display = "none";
         ui.signoutBtn.style.display = "";
+        accountTrigger.textContent = user.username || "●";
 
         show(ui.webmapSection);
       }
@@ -1052,6 +1054,7 @@
         ui.userInfo.textContent = "未ログイン";
         ui.signinBtn.style.display = "";
         ui.signoutBtn.style.display = "none";
+        accountTrigger.textContent = "●";
 
         [
           ui.webmapSection,
@@ -1109,6 +1112,34 @@
       //  タグ「Prescription-Map Design」を持つものだけを対象とする。
       // ==========================================================
 
+      function plainText(html) {
+        const temp = document.createElement("div");
+        temp.innerHTML = html || "";
+        return temp.textContent || temp.innerText || "";
+      }
+      function renderWebMapItems(items) {
+        ui.webmapResults.innerHTML = "";
+        items.forEach(function (item) {
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "webmap-card";
+          card.dataset.itemId = item.id;
+          const image = document.createElement("img");
+          image.alt = "";
+          image.src = item.thumbnailUrl || "";
+          const content = document.createElement("div");
+          const title = document.createElement("div"); title.className = "webmap-card-title"; title.textContent = item.title;
+          const meta = document.createElement("div"); meta.className = "webmap-card-meta"; meta.textContent = item.owner || "";
+          const desc = document.createElement("div"); desc.className = "webmap-card-desc"; desc.textContent = plainText(item.snippet || item.description || "説明はありません。");
+          content.append(title, meta, desc); card.append(image, content);
+          card.onclick = function () {
+            ui.webmapSelect.value = item.id;
+            ui.webmapLoadBtn.disabled = false;
+            ui.webmapResults.querySelectorAll(".webmap-card").forEach(function (node) { node.classList.toggle("selected", node === card); });
+          };
+          ui.webmapResults.append(card);
+        });
+      }
       ui.webmapSearchBtn.onclick = async function () {
 
         if (!state.portal) {
@@ -1122,6 +1153,7 @@
 
           state.webmapItems.clear();
           ui.webmapSelect.innerHTML = "";
+          ui.webmapResults.innerHTML = "";
           ui.webmapSelect.disabled = true;
           ui.webmapLoadBtn.disabled = true;
 
@@ -1951,7 +1983,7 @@
         const parts = Object.keys(counts)
           .sort(function (a, b) { return Number(a) - Number(b); })
           .map(function (zone) {
-            return (Number(zone) === 0 ? "範囲外" : "TZN " + zone) + ": " + counts[zone] + " 件";
+            return "TZN " + zone + ": " + counts[zone] + " 件";
           });
 
         ui.selectionInfo.textContent =
@@ -2083,7 +2115,7 @@
 
           setStatus(
             ui.cellStatus,
-            (zone === 0 ? "範囲外に設定しました。" : "TZN を " + zone + " に設定しました。") + "\n更新セル数: " + updates.length
+            "TZN を " + zone + " に設定しました。\n更新セル数: " + updates.length
           );
 
           state.rxLayer.refresh();
@@ -3162,7 +3194,7 @@
         await applyTznToSelection(0);
         clearSelection();
         ui.checkResult.innerHTML = "";
-        setStatus(ui.checkStatus, "選択された圃場外セルを 範囲外に変更しました。");
+        setStatus(ui.checkStatus, "選択された圃場外セルを TZN 0（散布なし）に変更しました。");
       };
 
       // ==========================================================
