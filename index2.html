@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>可変施肥設計ワークベンチ v19a.4</title>
+  <title>可変施肥設計ワークベンチ v19a.5</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.34/esri/themes/light/main.css">
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -438,6 +438,33 @@ input,select,button{border-radius:3px;min-height:36px}input,select{border:1px so
 .webmap-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.webmap-actions button{margin:0}.webmap-results{display:grid;gap:8px;margin-top:10px;max-height:390px;overflow:auto}.webmap-card{display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;padding:8px;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left;color:var(--text);min-height:94px}.webmap-card:hover{border-color:var(--brand);background:#f5fbff}.webmap-card.selected{outline:2px solid var(--brand);outline-offset:-2px}.webmap-thumb{width:112px;height:74px;object-fit:cover;background:#eef1f3;border:1px solid #e0e0e0}.webmap-title{font-weight:600;font-size:13px}.webmap-owner{font-size:11px;color:var(--text2);margin-top:3px}.webmap-desc{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.webmap-modified{font-size:10px;color:#6a6a6a;margin-top:5px}#webmapSelect{display:none}
 .tzn-buttons{grid-template-columns:repeat(3,1fr)}#tznButton0{grid-column:auto}.optional-block{margin-top:14px;border:1px solid var(--border);border-radius:4px;background:#fff}.optional-block>summary{cursor:pointer;padding:12px;background:var(--surface2);font-weight:600}.optional-block>summary span{display:block;font-size:11px;font-weight:400;color:var(--text2);margin-top:2px}.optional-block #exportSection{margin:0;border:0;box-shadow:none}
 @media(max-width:800px){#app{grid-template-columns:1fr;grid-template-rows:minmax(52vh,1fr) auto}#viewDiv{grid-column:1;grid-row:1;min-height:52vh}#panel{grid-column:1;grid-row:2;max-height:48vh;border-left:0;border-top:1px solid var(--border)}}
+
+/* v19a.5 immersive dark-glass map UI */
+:root{--glass:rgba(15,19,27,.90);--glass-2:rgba(31,36,47,.88);--line:rgba(255,255,255,.12);--cyan:#35d6e4;--cyan2:#70e7ef;--ink:#f6f8fb;--muted:#aab8ca;--danger:#ffb95c;--success:#6ee7a8}
+html,body,#app{width:100%;height:100%;overflow:hidden;background:#080b11;color:var(--ink)}
+#app{position:relative;display:block!important}
+#viewDiv{position:absolute!important;inset:0;height:100%;width:100%;z-index:0}
+#panel{position:absolute!important;left:14px;top:114px;bottom:18px;width:372px;z-index:10;box-sizing:border-box;padding:0 12px 18px!important;overflow:auto;border:1px solid var(--line)!important;border-radius:18px;background:linear-gradient(180deg,rgba(19,22,29,.94),rgba(25,28,36,.90))!important;box-shadow:0 20px 54px rgba(0,0,0,.50);backdrop-filter:blur(16px) saturate(120%);scrollbar-color:rgba(53,214,228,.7) transparent;transition:transform .25s ease,opacity .25s ease}
+#panel.panel-collapsed{transform:translateX(calc(-100% - 18px));opacity:.2;pointer-events:none}
+.panel-toggle{position:fixed;left:360px;top:126px;z-index:30;width:30px!important;height:30px;min-height:30px!important;padding:0!important;margin:0!important;border:1px solid var(--line)!important;border-radius:50%!important;background:#141a25!important;color:var(--cyan)!important;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.panel-toggle.collapsed{left:12px}
+.app-header{position:fixed!important;left:14px;top:16px;width:288px;z-index:20;margin:0!important;padding:14px 16px!important;box-sizing:border-box;border:1px solid var(--line);border-radius:16px;background:var(--glass)!important;box-shadow:0 16px 42px rgba(0,0,0,.42);backdrop-filter:blur(16px);display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.app-title h1{font-size:16px!important;color:#fff;margin:0 0 5px!important}.app-title p{font-size:11px!important;color:var(--muted)!important;line-height:1.45}.version{background:var(--cyan)!important;color:#071117!important}
+#accountMenu{align-self:start}.account-trigger{color:var(--cyan)!important;background:transparent!important;border:1px solid rgba(53,214,228,.45)!important;border-radius:16px!important;min-height:30px!important;padding:4px 8px!important}.account-popover{background:rgba(14,18,25,.98)!important;color:var(--ink);border-color:var(--line)!important;border-radius:12px}
+#panel h2{color:#fff!important;background:transparent!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;padding:13px 2px 9px!important;margin:4px 0 10px!important;font-size:14px!important;letter-spacing:.02em}
+#panel h2::first-letter{color:var(--cyan)}#panel h3{color:var(--cyan2)!important;margin-top:14px}
+.section{display:none;padding:0 6px 14px!important;margin-bottom:10px;background:transparent!important;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;box-shadow:none!important}
+.small{color:var(--muted)!important}
+#panel input,#panel select{color:var(--ink)!important;background:rgba(11,15,22,.72)!important;border:1px solid rgba(255,255,255,.18)!important;border-radius:8px!important;outline:none}#panel input:focus,#panel select:focus{border-color:var(--cyan)!important;box-shadow:0 0 0 2px rgba(53,214,228,.14)}
+#panel button{border-radius:9px!important;background:#1f2c3c!important;color:#f5fbff!important;border:1px solid rgba(255,255,255,.12)!important}#panel button:hover:not(:disabled){background:#26384a!important;border-color:rgba(53,214,228,.60)!important}#panel button:not(.secondary):not(.warn):not(.accent).active,#panel .tabs button.active{background:var(--cyan)!important;color:#071117!important;border-color:var(--cyan)!important}.secondary{background:transparent!important;color:var(--cyan2)!important;border-color:rgba(53,214,228,.35)!important}.warn{background:#4a3522!important;color:#ffd391!important}.accent{background:#116b61!important;color:#eafffb!important}
+.info-box,.balance{color:var(--muted)!important;background:rgba(255,255,255,.045)!important;border:1px solid var(--line)!important;border-radius:9px!important}.alert.warning{background:rgba(180,83,9,.18)!important;border-color:rgba(255,185,92,.5)!important;color:#ffd391!important}.alert.success{background:rgba(46,125,50,.18)!important;border-color:rgba(110,231,168,.45)!important;color:#baffd4!important}
+.webmap-results{max-height:330px!important}.webmap-card{grid-template-columns:88px minmax(0,1fr)!important;min-height:84px!important;background:rgba(255,255,255,.035)!important;color:var(--ink)!important;border:1px solid transparent!important;border-radius:12px!important}.webmap-card:hover{background:rgba(255,255,255,.075)!important}.webmap-card.selected{outline:1px solid var(--cyan)!important;background:rgba(53,214,228,.12)!important}.webmap-thumb{width:88px!important;height:64px!important;border-radius:9px;border-color:var(--line)!important}.webmap-title{color:#f7fbff!important}.webmap-owner,.webmap-desc,.webmap-modified{color:var(--muted)!important}
+.draw-tools button,.tzn-buttons button,.tabs button{background:rgba(255,255,255,.045)!important;color:var(--ink)!important;border-color:var(--line)!important}.swatch{border-color:rgba(255,255,255,.45)!important;border-radius:3px}
+table.grid{color:var(--ink);background:transparent}table.grid th,table.grid td{border-color:var(--line)!important}table.grid th,table.grid tr.total td{background:rgba(255,255,255,.075)!important}table.grid td.calc{background:rgba(255,255,255,.035)!important;color:var(--cyan2)!important}dl.summary dt{color:var(--muted)!important}
+.optional-block{margin:12px 0 0!important;background:transparent!important;border:1px solid var(--line)!important;border-radius:12px!important}.optional-block>summary{background:rgba(255,255,255,.045)!important;color:#fff!important;border-radius:12px;padding:12px!important}.optional-block[open]>summary{border-radius:12px 12px 0 0;border-bottom:1px solid var(--line)}
+.optional-block #exportSection{padding:0 8px 12px!important}
+.esri-ui .esri-widget,.esri-ui .esri-widget--button{background:rgba(13,17,24,.91)!important;color:#dce9f7!important;border:1px solid rgba(255,255,255,.12)!important;box-shadow:0 8px 22px rgba(0,0,0,.32)}.esri-ui .esri-widget--button:hover{color:var(--cyan)!important;background:#192231!important}
+@media(max-width:800px){#panel{left:8px;right:8px;top:104px;bottom:10px;width:auto;max-height:none!important}.app-header{left:8px;right:8px;top:8px;width:auto}.panel-toggle{left:auto;right:14px;top:108px}.panel-toggle.collapsed{left:auto;right:14px}}
 </style>
 </head>
 
@@ -446,7 +473,7 @@ input,select,button{border-radius:3px;min-height:36px}input,select{border:1px so
     <aside id="panel">
 
       <header class="app-header">
-        <div class="app-title"><h1>可変施肥設計ワークベンチ <span class="version">v19a.4</span></h1><p>圃場ごとに可変施肥の設計を行うアプリ</p></div>
+        <div class="app-title"><h1>可変施肥設計ワークベンチ <span class="version">v19a.5</span></h1><p>圃場ごとに可変施肥の設計を行うアプリ</p></div>
         <div id="accountMenu">
           <button id="accountTrigger" class="account-trigger" type="button" aria-expanded="false">サインイン</button>
           <div id="accountPopover" class="account-popover">
@@ -618,7 +645,7 @@ input,select,button{border-radius:3px;min-height:36px}input,select{border:1px so
       </section>
 
       <!-- ========== 9. ISOXML出力 ========== -->
-      <details class="optional-block"><summary>オプション<span>ISOXML 出力</span></summary>
+      <details class="optional-block"><summary>オプション</summary>
 <section id="exportSection" class="section">
         <h2>ISOXML 出力</h2>
         <p class="small">
@@ -634,11 +661,12 @@ input,select,button{border-radius:3px;min-height:36px}input,select{border:1px so
       </details>
 
     </aside>
+    <button id="panelToggle" class="panel-toggle" type="button" aria-label="操作パネルを閉じる">‹</button>
     <main id="viewDiv"></main>
   </div>
 
   <script>
-    // v19a.4
+    // v19a.5
     require([
       "esri/Map",
       "esri/WebMap",
@@ -657,7 +685,8 @@ input,select,button{border-radius:3px;min-height:36px}input,select{border:1px so
       "esri/widgets/BasemapGallery",
       "esri/widgets/Expand",
       "esri/widgets/Search",
-      "esri/widgets/Home"
+      "esri/widgets/Home",
+      "esri/widgets/Compass"
     ], function (
       ArcGISMap,
       WebMap,
@@ -676,7 +705,8 @@ input,select,button{border-radius:3px;min-height:36px}input,select{border:1px so
       BasemapGallery,
       Expand,
       Search,
-      Home
+      Home,
+      Compass
     ) {
       "use strict";
 
@@ -846,6 +876,13 @@ input,select,button{border-radius:3px;min-height:36px}input,select{border:1px so
       const accountPopover = dom("accountPopover");
       accountTrigger.onclick = function () { const open = accountPopover.classList.toggle("open"); accountTrigger.setAttribute("aria-expanded", String(open)); };
       document.addEventListener("click", function (event) { if (!dom("accountMenu").contains(event.target)) { accountPopover.classList.remove("open"); accountTrigger.setAttribute("aria-expanded", "false"); } });
+      const panelToggle = dom("panelToggle");
+      panelToggle.onclick = function () {
+        const collapsed = dom("panel").classList.toggle("panel-collapsed");
+        panelToggle.classList.toggle("collapsed", collapsed);
+        panelToggle.textContent = collapsed ? "›" : "‹";
+        panelToggle.setAttribute("aria-label", collapsed ? "操作パネルを開く" : "操作パネルを閉じる");
+      };
       const state = {
         portal: null,
         webmapItems: new globalThis.Map(),
@@ -945,6 +982,7 @@ input,select,button{border-radius:3px;min-height:36px}input,select{border:1px so
       function setupWidgets() {
 
         view.ui.add(new Home({ view: view }), "top-left");
+        view.ui.add(new Compass({ view: view }), "top-left");
 
         view.ui.add(
           new Expand({
@@ -4159,7 +4197,6 @@ input,select,button{border-radius:3px;min-height:36px}input,select{border:1px so
           setStatus(
             ui.exportStatus,
             "出力しました。\n圃場: " + targets.length +
-            "\nセル: " + totalCells +
             "\nファイル: " + anchor.download
           );
 
