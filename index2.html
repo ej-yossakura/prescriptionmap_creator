@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>可変施肥設計ワークベンチ v19a.3</title>
+  <title>可変施肥設計ワークベンチ v19a.4</title>
 
   <link rel="stylesheet" href="https://js.arcgis.com/4.34/esri/themes/light/main.css">
   <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
@@ -429,21 +429,15 @@
       }
     }
   
-    :root{--brand:#007ac2;--brand-hover:#00619b;--bg:#f3f4f5;--surface:#fff;--surface2:#f7f8f8;--border:#d9d9d9;--text:#151515;--text2:#4a4a4a;--shadow:0 1px 3px rgba(0,0,0,.12)}
-    #app{grid-template-columns:minmax(0,1fr) 410px;background:var(--bg)}
-    #viewDiv{grid-column:1;grid-row:1;min-width:0;background:#eef1f3}
-    #panel{grid-column:2;grid-row:1;padding:0 14px 28px;border-right:0;border-left:1px solid var(--border);background:var(--bg);box-shadow:-2px 0 8px rgba(0,0,0,.06)}
-    .app-header{position:sticky;top:0;z-index:20;margin:0 -14px 12px;padding:14px 12px;background:#fff;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start}
-    .app-title h1{font-size:17px;margin:0 0 4px}.app-title p{margin:0;font-size:12px;color:var(--text2);line-height:1.45}.version{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:10px;background:var(--brand);color:#fff;font-size:9px;vertical-align:2px}
-    #accountMenu{position:relative}.account-trigger{width:auto;min-width:38px;margin:0;padding:6px 9px;border:1px solid transparent;background:#fff;color:var(--brand);font-size:12px}.account-trigger:hover{background:#eef7fc;border-color:#b7dcef}.account-popover{display:none;position:absolute;right:0;top:40px;width:270px;padding:12px;background:#fff;border:1px solid var(--border);box-shadow:0 3px 12px rgba(0,0,0,.22);z-index:30}.account-popover.open{display:block}.account-popover .info-box{margin:0 0 8px}
-    #panel h2{margin:12px 0 0;padding:11px 12px;border:1px solid var(--border);border-bottom:0;border-radius:4px 4px 0 0;background:var(--surface2);font-size:14px;color:var(--text)}
-    .section{padding:0 12px 12px;background:#fff;border:1px solid var(--border);border-top:0;border-radius:0 0 4px 4px;box-shadow:var(--shadow)}.section>h2{margin-left:-12px;margin-right:-12px}
-    input,select,button{border-radius:3px;min-height:36px}input,select{border:1px solid #a9a9a9;background:#fff}button{background:var(--brand);font-weight:600}button:hover:not(:disabled){background:var(--brand-hover)}button.secondary{background:#fff;color:var(--brand);border:1px solid var(--brand)}
-    .webmap-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.webmap-actions button{margin:0}.webmap-results{display:grid;gap:8px;margin-top:10px;max-height:330px;overflow:auto}.webmap-card{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;padding:8px;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left}.webmap-card:hover{border-color:var(--brand);background:#f5fbff}.webmap-card.selected{outline:2px solid var(--brand);outline-offset:-2px}.webmap-card img{width:96px;height:64px;object-fit:cover;background:#eef1f3}.webmap-card-title{font-weight:600;font-size:13px;color:var(--text)}.webmap-card-meta{font-size:11px;color:var(--text2);margin-top:2px}.webmap-card-desc{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}#webmapSelect{display:none}
-    .tzn-buttons{grid-template-columns:repeat(3,1fr)}#tznButton0{grid-column:auto}
-    .optional-block{margin-top:14px;border:1px solid var(--border);border-radius:4px;background:#fff;box-shadow:var(--shadow)}.optional-block>summary{cursor:pointer;padding:12px;background:var(--surface2);font-weight:600}.optional-block>summary span{display:block;font-size:11px;font-weight:400;color:var(--text2);margin-top:2px}.optional-block #exportSection{margin:0;border:0;box-shadow:none}
-    .info-box{border:1px solid var(--border);background:var(--surface2)}
-    @media(max-width:800px){#app{grid-template-columns:1fr;grid-template-rows:minmax(52vh,1fr) auto}#viewDiv{grid-column:1;grid-row:1;min-height:52vh}#panel{grid-column:1;grid-row:2;max-height:48vh;border-left:0;border-top:1px solid var(--border)}}
+:root{--brand:#007ac2;--brand-hover:#00619b;--bg:#f3f4f5;--surface:#fff;--surface2:#f7f8f8;--border:#d9d9d9;--text:#151515;--text2:#4a4a4a;--shadow:0 1px 3px rgba(0,0,0,.12)}
+#app{grid-template-columns:minmax(0,1fr) 410px;background:var(--bg)}#viewDiv{grid-column:1;grid-row:1;min-width:0}#panel{grid-column:2;grid-row:1;padding:0 10px 28px;border-right:0;border-left:1px solid var(--border);background:var(--bg)}
+.app-header{position:sticky;top:0;z-index:20;margin:0 -10px 12px;padding:12px 10px;background:#fff;border-bottom:1px solid var(--border);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.app-title h1{font-size:17px;margin:0 0 4px}.app-title p{margin:0;font-size:12px;color:var(--text2)}.version{margin-left:5px;padding:2px 7px;border-radius:10px;background:var(--brand);color:#fff;font-size:9px;vertical-align:2px}
+#accountMenu{position:relative}.account-trigger{width:auto;min-width:72px;margin:0;padding:5px 8px;border:0;background:#fff;color:var(--brand);font-size:12px;text-align:right}.account-trigger:hover{background:#eef7fc}.account-popover{display:none;position:absolute;right:0;top:34px;width:270px;padding:12px;background:#fff;border:1px solid var(--border);box-shadow:0 3px 12px rgba(0,0,0,.22);z-index:30}.account-popover.open{display:block}.account-popover .info-box{margin:0 0 8px}
+#panel h2{margin:12px 0 0;padding:11px 12px;border:1px solid var(--border);border-bottom:0;border-radius:4px 4px 0 0;background:var(--surface2);font-size:14px}.section{padding:0 12px 12px;background:#fff;border:1px solid var(--border);border-top:0;border-radius:0 0 4px 4px;box-shadow:var(--shadow)}.section>h2{margin-left:-12px;margin-right:-12px}
+input,select,button{border-radius:3px;min-height:36px}input,select{border:1px solid #a9a9a9;background:#fff}button{background:var(--brand);font-weight:600}button:hover:not(:disabled){background:var(--brand-hover)}button.secondary{background:#fff;color:var(--brand);border:1px solid var(--brand)}.info-box{border:1px solid var(--border);background:var(--surface2)}
+.webmap-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.webmap-actions button{margin:0}.webmap-results{display:grid;gap:8px;margin-top:10px;max-height:390px;overflow:auto}.webmap-card{display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;padding:8px;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left;color:var(--text);min-height:94px}.webmap-card:hover{border-color:var(--brand);background:#f5fbff}.webmap-card.selected{outline:2px solid var(--brand);outline-offset:-2px}.webmap-thumb{width:112px;height:74px;object-fit:cover;background:#eef1f3;border:1px solid #e0e0e0}.webmap-title{font-weight:600;font-size:13px}.webmap-owner{font-size:11px;color:var(--text2);margin-top:3px}.webmap-desc{font-size:11px;color:var(--text2);margin-top:5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.webmap-modified{font-size:10px;color:#6a6a6a;margin-top:5px}#webmapSelect{display:none}
+.tzn-buttons{grid-template-columns:repeat(3,1fr)}#tznButton0{grid-column:auto}.optional-block{margin-top:14px;border:1px solid var(--border);border-radius:4px;background:#fff}.optional-block>summary{cursor:pointer;padding:12px;background:var(--surface2);font-weight:600}.optional-block>summary span{display:block;font-size:11px;font-weight:400;color:var(--text2);margin-top:2px}.optional-block #exportSection{margin:0;border:0;box-shadow:none}
+@media(max-width:800px){#app{grid-template-columns:1fr;grid-template-rows:minmax(52vh,1fr) auto}#viewDiv{grid-column:1;grid-row:1;min-height:52vh}#panel{grid-column:1;grid-row:2;max-height:48vh;border-left:0;border-top:1px solid var(--border)}}
 </style>
 </head>
 
@@ -452,12 +446,9 @@
     <aside id="panel">
 
       <header class="app-header">
-        <div class="app-title">
-          <h1>可変施肥設計ワークベンチ <span class="version">v19a.3</span></h1>
-          <p>圃場ごとに可変施肥の設計を行うアプリ</p>
-        </div>
+        <div class="app-title"><h1>可変施肥設計ワークベンチ <span class="version">v19a.4</span></h1><p>圃場ごとに可変施肥の設計を行うアプリ</p></div>
         <div id="accountMenu">
-          <button id="accountTrigger" class="account-trigger" type="button" aria-expanded="false" title="ArcGIS Online アカウント">●</button>
+          <button id="accountTrigger" class="account-trigger" type="button" aria-expanded="false">サインイン</button>
           <div id="accountPopover" class="account-popover">
             <div id="userInfo" class="info-box">未ログイン</div>
             <button id="signinBtn">サインイン</button>
@@ -472,13 +463,8 @@
           タグ「Prescription-Map Design」を持つ Web マップのみを対象とします。
         </p>
         <input id="webmapSearch" type="text" placeholder="Web マップ名で絞り込み（空欄可）">
-        <div class="webmap-actions">
-          <button id="webmapSearchBtn">検索</button>
-          <button id="webmapLoadBtn" disabled>開く</button>
-        </div>
-        <select id="webmapSelect" disabled aria-hidden="true">
-          <option value="">検索するとここに表示されます</option>
-        </select>
+        <div class="webmap-actions"><button id="webmapSearchBtn">検索</button><button id="webmapLoadBtn" disabled>開く</button></div>
+        <select id="webmapSelect" disabled aria-hidden="true"><option value="">検索するとここに表示されます</option></select>
         <div id="webmapResults" class="webmap-results" aria-live="polite"></div>
         <div id="webmapStatus" class="info-box">未読込</div>
       </section>
@@ -652,7 +638,7 @@
   </div>
 
   <script>
-    // v19a.3 safe UI evolution based on v18.
+    // v19a.4
     require([
       "esri/Map",
       "esri/WebMap",
@@ -858,16 +844,8 @@
 
       const accountTrigger = dom("accountTrigger");
       const accountPopover = dom("accountPopover");
-      accountTrigger.onclick = function () {
-        const open = accountPopover.classList.toggle("open");
-        accountTrigger.setAttribute("aria-expanded", String(open));
-      };
-      document.addEventListener("click", function (event) {
-        if (!dom("accountMenu").contains(event.target)) {
-          accountPopover.classList.remove("open");
-          accountTrigger.setAttribute("aria-expanded", "false");
-        }
-      });
+      accountTrigger.onclick = function () { const open = accountPopover.classList.toggle("open"); accountTrigger.setAttribute("aria-expanded", String(open)); };
+      document.addEventListener("click", function (event) { if (!dom("accountMenu").contains(event.target)) { accountPopover.classList.remove("open"); accountTrigger.setAttribute("aria-expanded", "false"); } });
       const state = {
         portal: null,
         webmapItems: new globalThis.Map(),
@@ -1042,7 +1020,7 @@
 
         ui.signinBtn.style.display = "none";
         ui.signoutBtn.style.display = "";
-        accountTrigger.textContent = user.username || "●";
+        accountTrigger.textContent = (user.username || user.fullName || "アカウント") + " ▾";
 
         show(ui.webmapSection);
       }
@@ -1054,7 +1032,7 @@
         ui.userInfo.textContent = "未ログイン";
         ui.signinBtn.style.display = "";
         ui.signoutBtn.style.display = "none";
-        accountTrigger.textContent = "●";
+        accountTrigger.textContent = "サインイン";
 
         [
           ui.webmapSection,
@@ -1112,33 +1090,25 @@
       //  タグ「Prescription-Map Design」を持つものだけを対象とする。
       // ==========================================================
 
-      function plainText(html) {
-        const temp = document.createElement("div");
-        temp.innerHTML = html || "";
-        return temp.textContent || temp.innerText || "";
-      }
-      function renderWebMapItems(items) {
+      function plainText(html) { const temp = document.createElement("div"); temp.innerHTML = html || ""; return temp.textContent || temp.innerText || ""; }
+      function formatItemDate(value) { const date = value instanceof Date ? value : new Date(value); return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("ja-JP"); }
+      async function renderWebMapItems(items) {
         ui.webmapResults.innerHTML = "";
-        items.forEach(function (item) {
-          const card = document.createElement("button");
-          card.type = "button";
-          card.className = "webmap-card";
-          card.dataset.itemId = item.id;
-          const image = document.createElement("img");
-          image.alt = "";
-          image.src = item.thumbnailUrl || "";
+        for (const item of items) {
+          try { if (!item.loaded) await item.load(); } catch (error) { console.warn("PortalItem load warning", item.id, error); }
+          const card = document.createElement("button"); card.type = "button"; card.className = "webmap-card";
+          const image = document.createElement("img"); image.className = "webmap-thumb"; image.alt = item.title ? item.title + " のサムネイル" : "Web マップのサムネイル";
+          const fallback = "data:image/svg+xml;charset=UTF-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="224" height="148"><rect width="100%" height="100%" fill="#eef1f3"/><path d="M70 103l30-35 22 23 18-18 32 30" fill="none" stroke="#8a8a8a" stroke-width="5"/><circle cx="82" cy="50" r="10" fill="#8a8a8a"/></svg>');
+          image.src = item.thumbnailUrl || fallback; image.onerror = function () { image.onerror = null; image.src = fallback; };
           const content = document.createElement("div");
-          const title = document.createElement("div"); title.className = "webmap-card-title"; title.textContent = item.title;
-          const meta = document.createElement("div"); meta.className = "webmap-card-meta"; meta.textContent = item.owner || "";
-          const desc = document.createElement("div"); desc.className = "webmap-card-desc"; desc.textContent = plainText(item.snippet || item.description || "説明はありません。");
-          content.append(title, meta, desc); card.append(image, content);
-          card.onclick = function () {
-            ui.webmapSelect.value = item.id;
-            ui.webmapLoadBtn.disabled = false;
-            ui.webmapResults.querySelectorAll(".webmap-card").forEach(function (node) { node.classList.toggle("selected", node === card); });
-          };
+          const title = document.createElement("div"); title.className = "webmap-title"; title.textContent = item.title || "名称未設定";
+          const owner = document.createElement("div"); owner.className = "webmap-owner"; owner.textContent = "所有者: " + (item.owner || "不明");
+          const desc = document.createElement("div"); desc.className = "webmap-desc"; desc.textContent = plainText(item.snippet || item.description || "説明はありません。");
+          const modified = document.createElement("div"); modified.className = "webmap-modified"; modified.textContent = item.modified ? "更新日: " + formatItemDate(item.modified) : "";
+          content.append(title, owner, desc, modified); card.append(image, content);
+          card.onclick = function () { ui.webmapSelect.value = item.id; ui.webmapLoadBtn.disabled = false; ui.webmapResults.querySelectorAll(".webmap-card").forEach(function (node) { node.classList.toggle("selected", node === card); }); };
           ui.webmapResults.append(card);
-        });
+        }
       }
       ui.webmapSearchBtn.onclick = async function () {
 
@@ -1198,6 +1168,7 @@
             ui.webmapSelect.append(option);
           });
 
+          await renderWebMapItems(result.results);
           ui.webmapSelect.disabled = false;
 
           setStatus(ui.webmapStatus, result.results.length + " 件見つかりました。");
