@@ -4211,6 +4211,101 @@ table.grid{color:var(--ink);background:transparent}table.grid th,table.grid td{b
 
     });
   </script>
+
+<style>
+/* ===== v19a.6 ===== */
+#panel{top:16px!important;bottom:16px!important;left:14px!important;width:340px!important;
+background:linear-gradient(180deg,rgba(19,22,29,.78),rgba(25,28,36,.74))!important;
+backdrop-filter:blur(18px) saturate(125%)!important}
+.app-header{display:none!important}
+
+/* --- パネル開閉ボタン：ウィジェット群を避けて下方に固定 --- */
+.panel-toggle{position:fixed!important;top:240px!important;left:322px!important;
+right:auto!important;z-index:70!important;width:30px!important;height:30px!important;
+min-height:30px!important;background:rgba(20,26,37,.88)!important;color:#35d6e4!important;
+border:1px solid rgba(255,255,255,.16)!important;border-radius:50%!important;
+box-shadow:0 8px 24px rgba(0,0,0,.40)!important;backdrop-filter:blur(10px);
+transition:left .25s ease}
+.panel-toggle.collapsed{left:12px!important}
+
+.panel-title{position:sticky;top:0;z-index:12;margin:0 -12px 8px;padding:14px 100px 12px 14px;
+background:linear-gradient(180deg,rgba(17,20,27,.92),rgba(17,20,27,.55));
+border-bottom:1px solid rgba(255,255,255,.12);backdrop-filter:blur(12px)}
+.panel-title h1{margin:0 0 5px;font-size:16px;color:#fff;font-weight:600}
+.panel-title p{margin:0;font-size:11px;line-height:1.5;color:#aab8ca}
+
+#accountMenu{position:absolute!important;top:12px!important;right:14px!important;
+left:auto!important;z-index:24!important;width:auto!important}
+#accountMenu .account-trigger{width:auto!important;min-width:0!important;min-height:26px!important;
+padding:4px 10px!important;margin:0!important;border-radius:14px!important;font-size:11px!important;
+font-weight:600!important;color:#35d6e4!important;background:rgba(53,214,228,.10)!important;
+border:1px solid rgba(53,214,228,.45)!important;box-shadow:none!important;white-space:nowrap}
+#accountMenu .account-trigger:hover{background:rgba(53,214,228,.22)!important;color:#eaf9fc!important}
+#accountMenu .account-popover{right:0!important;left:auto!important;top:32px!important;
+background:rgba(14,18,25,.96)!important;backdrop-filter:blur(16px);
+box-shadow:0 12px 34px rgba(0,0,0,.45)!important}
+
+/* --- パネルとの重なり回避 --- */
+.esri-ui-top-left,.esri-ui-bottom-left{transition:left .25s ease}
+#panel:not(.panel-collapsed)~#viewDiv .esri-ui-top-left,
+#panel:not(.panel-collapsed)~#viewDiv .esri-ui-bottom-left{left:362px!important}
+#panel.panel-collapsed~#viewDiv .esri-ui-top-left,
+#panel.panel-collapsed~#viewDiv .esri-ui-bottom-left{left:8px!important}
+
+/* --- ウィジェットボタン：白地・四角で統一 --- */
+.esri-ui .esri-component,.esri-ui .esri-widget,
+.esri-ui .esri-expand,.esri-ui .esri-expand__container,
+.esri-ui .esri-zoom,.esri-ui .esri-search__container,
+.esri-ui .esri-search,.esri-ui .esri-search__form{
+background:transparent!important;border:0!important;box-shadow:none!important}
+.esri-ui .esri-widget--button{
+width:32px!important;height:32px!important;
+margin:0 0 6px 0!important;padding:0!important;
+display:flex!important;align-items:center!important;justify-content:center!important;
+background:#fff!important;color:#2c3e50!important;
+border:1px solid rgba(0,0,0,.18)!important;border-radius:2px!important;
+box-shadow:0 2px 6px rgba(0,0,0,.28)!important;backdrop-filter:none!important}
+.esri-ui .esri-widget--button:hover,.esri-ui .esri-widget--button:focus{
+background:#f2f7fb!important;color:#007ac2!important;
+border-color:rgba(0,122,194,.55)!important}
+.esri-ui .esri-zoom .esri-widget--button{border-radius:2px!important}
+.esri-ui .esri-search__input{background:#fff!important;color:#2c3e50!important;
+border:1px solid rgba(0,0,0,.18)!important;border-radius:2px!important}
+
+/* --- 展開パネル --- */
+.esri-ui .esri-expand__content,.esri-ui .esri-layer-list,.esri-ui .esri-legend,
+.esri-ui .esri-basemap-gallery,.esri-ui .esri-search__suggestions-menu,.esri-ui .esri-menu{
+background:rgba(14,18,25,.92)!important;color:#f2f8ff!important;
+border:1px solid rgba(255,255,255,.12)!important;border-radius:8px!important;
+box-shadow:0 14px 34px rgba(0,0,0,.42)!important;backdrop-filter:blur(16px)}
+.esri-ui .esri-layer-list__item,.esri-ui .esri-legend__service,
+.esri-ui .esri-basemap-gallery__item{background:transparent!important;color:#f2f8ff!important;
+border-color:rgba(255,255,255,.10)!important}
+
+@media(max-width:800px){#panel{left:8px!important;right:8px!important;top:58px!important;
+bottom:10px!important;width:auto!important}
+.panel-toggle{left:auto!important;right:14px!important;top:16px!important}
+.panel-toggle.collapsed{left:auto!important;right:14px!important}
+#panel:not(.panel-collapsed)~#viewDiv .esri-ui-top-left,
+#panel:not(.panel-collapsed)~#viewDiv .esri-ui-bottom-left{left:8px!important}}
+</style>
+<script>
+(function(){function f(){var p=document.getElementById("panel"),
+h=document.querySelector(".app-header"),a=document.getElementById("accountMenu"),
+b=document.getElementById("panelToggle"),t=document.querySelector(".panel-title");
+if(!p)return;
+if(!t){t=document.createElement("div");t.className="panel-title";
+t.innerHTML='<h1>可変施肥設計ワークベンチ</h1>'+
+'<p>圃場ごとに可変施肥の設計を行うアプリ</p>';
+p.insertBefore(t,p.firstChild);}
+if(a&&a.parentElement!==t)t.appendChild(a);
+if(b&&b.parentElement!==document.body)document.body.appendChild(b);
+if(h&&h.parentElement)h.parentElement.removeChild(h);
+document.title="可変施肥設計ワークベンチ";}
+document.readyState==="loading"?document.addEventListener("DOMContentLoaded",f):f();
+var n=0,i=setInterval(function(){f();if(++n>=10)clearInterval(i);},600);})();
+</script>
+
 </body>
 
 </html>
