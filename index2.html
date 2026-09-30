@@ -4295,13 +4295,13 @@ h=document.querySelector(".app-header"),a=document.getElementById("accountMenu")
 b=document.getElementById("panelToggle"),t=document.querySelector(".panel-title");
 if(!p)return;
 if(!t){t=document.createElement("div");t.className="panel-title";
-t.innerHTML='<h1>可変施肥設計ワークベンチ</h1>'+
+t.innerHTML='<h1>可変施肥設計アプリ</h1>'+
 '<p>圃場ごとに可変施肥の設計を行うアプリ</p>';
 p.insertBefore(t,p.firstChild);}
 if(a&&a.parentElement!==t)t.appendChild(a);
 if(b&&b.parentElement!==document.body)document.body.appendChild(b);
 if(h&&h.parentElement)h.parentElement.removeChild(h);
-document.title="可変施肥設計ワークベンチ";}
+document.title="可変施肥設計アプリ";}
 document.readyState==="loading"?document.addEventListener("DOMContentLoaded",f):f();
 var n=0,i=setInterval(function(){f();if(++n>=10)clearInterval(i);},600);})();
 </script>
