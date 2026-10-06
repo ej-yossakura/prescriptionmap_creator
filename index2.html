@@ -980,34 +980,53 @@ table.grid{color:var(--ink);background:transparent}table.grid th,table.grid td{b
       });
             
       async function queryAllFeatures(layer, baseQuery) {
+      
+        const oidField = layer.objectIdField;
+      
         const allFeatures = [];
-        const pageSize = 2000;
-        let offset = 0;
+        let lastOid = -1;
       
         while (true) {
+      
           const query = layer.createQuery();
       
           Object.assign(query, baseQuery);
       
-          query.resultOffset = offset;
-          query.resultRecordCount = pageSize;
+          query.where =
+            `(${baseQuery.where}) AND ${oidField} > ${lastOid}`;
       
-          const result = await layer.queryFeatures(query);
+          query.orderByFields = [
+            `${oidField} ASC`
+          ];
       
-          allFeatures.push(...result.features);
+          query.num = 2000;
       
-          console.log(
-            `取得: ${result.features.length}件, 合計: ${allFeatures.length}件`
-          );
+          const result =
+            await layer.queryFeatures(query);
       
-          if (
-            !result.features.length ||
-            result.features.length < pageSize
-          ) {
+          if (!result.features.length) {
             break;
           }
       
-          offset += pageSize;
+          allFeatures.push(...result.features);
+      
+          lastOid =
+            result.features[
+              result.features.length - 1
+            ].attributes[oidField];
+      
+          console.log(
+            "取得",
+            result.features.length,
+            "合計",
+            allFeatures.length,
+            "lastOid",
+            lastOid
+          );
+      
+          if (result.features.length < 2000) {
+            break;
+          }
         }
       
         return allFeatures;
