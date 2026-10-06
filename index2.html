@@ -978,7 +978,41 @@ table.grid{color:var(--ink);background:transparent}table.grid th,table.grid td{b
         center: [142.06, 43.75],
         zoom: 11
       });
-
+            
+      async function queryAllFeatures(layer, baseQuery) {
+        const allFeatures = [];
+        const pageSize = 2000;
+        let offset = 0;
+      
+        while (true) {
+          const query = layer.createQuery();
+      
+          Object.assign(query, baseQuery);
+      
+          query.resultOffset = offset;
+          query.resultRecordCount = pageSize;
+      
+          const result = await layer.queryFeatures(query);
+      
+          allFeatures.push(...result.features);
+      
+          console.log(
+            `取得: ${result.features.length}件, 合計: ${allFeatures.length}件`
+          );
+      
+          if (
+            !result.features.length ||
+            result.features.length < pageSize
+          ) {
+            break;
+          }
+      
+          offset += pageSize;
+        }
+      
+        return allFeatures;
+      }
+            
       function setupWidgets() {
 
         view.ui.add(new Home({ view: view }), "top-left");
