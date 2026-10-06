@@ -3833,13 +3833,13 @@ table.grid{color:var(--ink);background:transparent}table.grid th,table.grid td{b
         query.outSpatialReference = { wkid: 4326 };
         query.num = CONFIG.queryLimit;
 
-        const result = await state.rxLayer.queryFeatures(query);
+        const features = await queryAllFeatures(state.rxLayer, query);
 
-        if (!result.features.length) {
+        if (!features.length) {
           throw new Error(fieldId + ": セルがありません。");
         }
 
-        const cells = result.features.map(function (feature) {
+        const cells = features.map(function (feature) {
 
           const attributes = feature.attributes;
 
